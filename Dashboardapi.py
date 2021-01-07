@@ -2,7 +2,9 @@ from flask import Flask
 from flask import jsonify
 import pandas as pd
 import json
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello_world():
@@ -45,6 +47,9 @@ def Predictions():
 
 def Prediction():
     folder = pd.read_csv('Predictie.csv')
+    folder.drop(folder.columns.difference(['timestamp','close']), 1, inplace=True)
+    folder.columns=["timestamp","close"]
+    folder.set_index('timestamp',inplace=True)
     result= folder.to_json(orient="table")
     parsed = json.loads(result)
     return parsed
